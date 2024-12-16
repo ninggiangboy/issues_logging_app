@@ -1,7 +1,7 @@
-package dev.ngb.issues_logging_app.infrastructure.cache.impl;
+package dev.ngb.issues_logging_app.infrastructure.cache.redis.impl;
 
 import dev.ngb.issues_logging_app.common.util.StringUtils;
-import dev.ngb.issues_logging_app.infrastructure.cache.RedisCacheService;
+import dev.ngb.issues_logging_app.infrastructure.cache.redis.RedisCacheService;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 

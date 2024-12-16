@@ -1,4 +1,4 @@
-package dev.ngb.issues_logging_app.infrastructure.cache;
+package dev.ngb.issues_logging_app.infrastructure.cache.redis;
 
 import java.util.Optional;
 

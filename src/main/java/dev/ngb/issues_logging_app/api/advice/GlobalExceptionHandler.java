@@ -1,6 +1,8 @@
 package dev.ngb.issues_logging_app.api.advice;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dev.ngb.issues_logging_app.application.exception.NotFoundException;
+import dev.ngb.issues_logging_app.application.exception.ValidationException;
 import dev.ngb.issues_logging_app.common.factory.ResponseFactory;
 import dev.ngb.issues_logging_app.common.model.ApiError;
 import jakarta.servlet.http.HttpServletRequest;
@@ -44,26 +46,26 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({
             NoResourceFoundException.class,
-//            NotFoundException.class
+            NotFoundException.class
     })
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ApiError handleNotFoundException(Exception e, HttpServletRequest request) {
         return ResponseFactory.createErrorResponse(e.getMessage(), request.getRequestURI());
     }
 
-//    @ExceptionHandler(ValidationException.class)
-//    @ResponseStatus(HttpStatus.BAD_REQUEST)
-//    public ApiError handleValidationException(ValidationException e, HttpServletRequest request) {
-//        Class<?> targetClass = e.getInvalidClass();
-//        Map<String, List<String>> errors = e.getErrors()
-//                .entrySet()
-//                .stream()
-//                .collect(Collectors.toMap(
-//                        entry -> resolveJsonName(entry.getKey(), targetClass),
-//                        Map.Entry::getValue
-//                ));
-//        return ResponseFactory.createErrorResponse(VALIDATION_ERROR_MESSAGE, request.getRequestURI(), errors);
-//    }
+    @ExceptionHandler(ValidationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError handleValidationException(ValidationException e, HttpServletRequest request) {
+        Class<?> targetClass = e.getInvalidClass();
+        Map<String, List<String>> errors = e.getErrors()
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(
+                        entry -> resolveJsonName(entry.getKey(), targetClass),
+                        Map.Entry::getValue
+                ));
+        return ResponseFactory.createErrorResponse(VALIDATION_ERROR_MESSAGE, request.getRequestURI(), errors);
+    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)

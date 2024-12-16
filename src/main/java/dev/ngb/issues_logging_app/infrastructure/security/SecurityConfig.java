@@ -1,5 +1,7 @@
 package dev.ngb.issues_logging_app.infrastructure.security;
 
+import dev.ngb.issues_logging_app.application.exception.UserNotFoundException;
+import dev.ngb.issues_logging_app.domain.repository.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
@@ -9,6 +11,8 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -35,6 +39,7 @@ public class SecurityConfig {
             "/error",
             "/greeting/public",
             "/auth/login",
+            "/auth/refresh",
             "/auth/reset-password",
             "/tags"
     };
@@ -52,22 +57,22 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 
-//    @Bean
-//    public UserDetailsService userDetailsService(UserRepository userRepository) {
-//        return (username) -> userRepository.findByEmail(username)
-//                .map(user -> User.builder()
-//                        .username(user.getId().toString())
-//                        .password(user.getPassword())
-//                        .authorities(user.getIsAdmin() ? getAdminAuthorities() : Collections.emptyList())
-//                        .accountLocked(user.getIsBlocked())
-//                        .disabled(false)
-//                        .build())
-//                .orElseThrow(() -> new UserNotFoundException("User not found: " + username));
-//    }
-//
-//    public Collection<GrantedAuthority> getAdminAuthorities() {
-//        return List.of(new SimpleGrantedAuthority(AuthConstant.ROLE_PREFIX + AuthConstant.ADMIN_ROLE_NAME));
-//    }
+    @Bean
+    public UserDetailsService userDetailsService(UserRepository userRepository) {
+        return (username) -> userRepository.findByEmail(username)
+                .map(user -> User.builder()
+                        .username(user.getId().toString())
+                        .password(user.getPassword())
+                        .authorities(user.getIsAdmin() ? getAdminAuthorities() : Collections.emptyList())
+                        .accountLocked(user.getIsBlocked())
+                        .disabled(false)
+                        .build())
+                .orElseThrow(() -> new UserNotFoundException("User not found: " + username));
+    }
+
+    public Collection<GrantedAuthority> getAdminAuthorities() {
+        return List.of(new SimpleGrantedAuthority(AuthConstant.ROLE_PREFIX + AuthConstant.ADMIN_ROLE_NAME));
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
