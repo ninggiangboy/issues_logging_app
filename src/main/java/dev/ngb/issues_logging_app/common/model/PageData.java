@@ -14,7 +14,13 @@ public record PageData<T>(
             int page,
             int size,
             int totalPage,
-            long totalElement
+            long totalElement,
+            boolean hasNext,
+            boolean hasPrevious
     ) {
+        public PageMetadata {
+            hasNext = page < totalPage - 1;
+            hasPrevious = page > 0;
+        }
     }
 }

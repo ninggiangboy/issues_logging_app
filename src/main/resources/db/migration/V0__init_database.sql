@@ -74,3 +74,9 @@ CREATE TABLE attachments (
     file_path VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE project_users (
+   project_id INT REFERENCES projects(project_id) ON DELETE CASCADE,
+   user_id UUID REFERENCES users(user_id) ON DELETE CASCADE,
+   PRIMARY KEY (project_id, user_id)
+);
