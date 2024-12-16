@@ -21,13 +21,13 @@ public class TagResource implements TagEndpoint {
 
     @Override
     public ApiResult<List<TagItemResponse>> getAll() {
-        List<TagItemResponse> tags = tagService.getAllTags();
-        return ResponseFactory.createResultResponse(tags);
+        List<TagItemResponse> tagsList = tagService.getAllTags();
+        return ResponseFactory.createResultResponse(tagsList);
     }
 
     @Override
     public ApiResult<TagItemResponse> create(TagCreateRequest request) {
-        TagItemResponse tag = tagService.createTag(request);
-        return ResponseFactory.createResultResponse(tag);
+        TagItemResponse createdTag = tagService.createTag(request);
+        return ResponseFactory.createResultResponse(createdTag);
     }
 }

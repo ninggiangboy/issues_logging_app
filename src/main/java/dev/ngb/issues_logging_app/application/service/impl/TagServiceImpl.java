@@ -35,11 +35,12 @@ public class TagServiceImpl implements TagService {
     @Override
     @SuppressWarnings("unchecked")
     public List<TagItemResponse> getAllTags() {
-        return (List<TagItemResponse>) Optional.ofNullable(cache.get(CacheConstant.ALL_TAGS_KEY_NAME, List.class))
+        return (List<TagItemResponse>) Optional.ofNullable(cache
+                        .get(CacheConstant.ALL_TAGS_KEY_NAME, List.class))
                 .orElseGet(() -> {
                     List<TagItemResponse> tagsFromDb = tagRepository.findAll()
                             .stream()
-                            .map(tagMapper::toResponse)
+                            .map(tagMapper::mapToResponse)
                             .toList();
                     cache.put(CacheConstant.ALL_TAGS_KEY_NAME, tagsFromDb);
                     return tagsFromDb;
@@ -50,10 +51,10 @@ public class TagServiceImpl implements TagService {
     public TagItemResponse createTag(TagCreateRequest request) {
         validateRequest(request);
         ensureTagNameIsUnique(request.name());
-        Tag tagEntity = tagMapper.toEntity(request);
+        Tag tagEntity = tagMapper.mapToEntity(request);
         Tag savedTag = tagRepository.save(tagEntity);
         cache.evict(CacheConstant.ALL_TAGS_KEY_NAME);
-        return tagMapper.toResponse(savedTag);
+        return tagMapper.mapToResponse(savedTag);
     }
 
     private void validateRequest(TagCreateRequest request) {
