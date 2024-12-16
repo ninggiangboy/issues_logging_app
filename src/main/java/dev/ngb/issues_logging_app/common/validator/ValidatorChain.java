@@ -71,8 +71,8 @@ public abstract class ValidatorChain<T> {
      * @param object the object to check
      * @return true if the object is valid, false otherwise
      */
-    public boolean isValid(T object) {
-        return validate(object).isEmpty();
+    public boolean isNotValid(T object) {
+        return !validate(object).isEmpty();
     }
 
     /**

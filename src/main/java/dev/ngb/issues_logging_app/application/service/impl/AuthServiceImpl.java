@@ -3,7 +3,6 @@ package dev.ngb.issues_logging_app.application.service.impl;
 import dev.ngb.issues_logging_app.application.constant.TokenType;
 import dev.ngb.issues_logging_app.application.dto.auth.LoginRequest;
 import dev.ngb.issues_logging_app.application.dto.auth.LoginResponse;
-import dev.ngb.issues_logging_app.application.exception.UserNotFoundException;
 import dev.ngb.issues_logging_app.application.exception.ValidationException;
 import dev.ngb.issues_logging_app.application.service.AuthService;
 import dev.ngb.issues_logging_app.application.service.JwtService;
@@ -16,7 +15,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -48,7 +46,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public LoginResponse authenticate(LoginRequest request) {
         ValidatorChain<LoginRequest> validator = validatorFactory.getValidator(LoginRequest.class);
-        if (!validator.isValid(request)) {
+        if (validator.isNotValid(request)) {
             throw new ValidationException(validator.getErrors(), LoginRequest.class);
         }
 
@@ -92,15 +90,15 @@ public class AuthServiceImpl implements AuthService {
         return userRepository.findById(userId)
                 .map(user -> User.builder()
                         .username(user.getId().toString())
-                        .password(user.getPassword())
+                        .password("")
                         .authorities(user.getIsAdmin() ? getAdminAuthorities() : Collections.emptyList())
                         .accountLocked(user.getIsBlocked())
                         .disabled(false)
                         .build())
-                .filter(userDetails -> !userDetails.isAccountNonLocked())
-                .filter(userDetails -> !userDetails.isAccountNonExpired())
-                .filter(userDetails -> !userDetails.isEnabled())
-                .filter(userDetails -> !userDetails.isCredentialsNonExpired())
+                .filter(user -> !user.isAccountNonLocked())
+                .filter(user -> !user.isAccountNonExpired())
+                .filter(user -> !user.isEnabled())
+                .filter(user -> !user.isCredentialsNonExpired())
                 .orElseThrow(() -> new BadCredentialsException("User can't be authenticated"));
     }
 

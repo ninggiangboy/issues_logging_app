@@ -41,7 +41,6 @@ public class SecurityConfig {
             "/auth/login",
             "/auth/refresh",
             "/auth/reset-password",
-            "/tags"
     };
 
     private final AuthenticationEntryPoint authenticationEntryPoint;

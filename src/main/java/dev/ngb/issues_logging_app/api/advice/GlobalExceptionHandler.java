@@ -1,6 +1,7 @@
 package dev.ngb.issues_logging_app.api.advice;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dev.ngb.issues_logging_app.application.exception.DuplicationException;
 import dev.ngb.issues_logging_app.application.exception.NotFoundException;
 import dev.ngb.issues_logging_app.application.exception.ValidationException;
 import dev.ngb.issues_logging_app.common.factory.ResponseFactory;
@@ -8,6 +9,7 @@ import dev.ngb.issues_logging_app.common.model.ApiError;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
@@ -50,6 +52,21 @@ public class GlobalExceptionHandler {
     })
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ApiError handleNotFoundException(Exception e, HttpServletRequest request) {
+        return ResponseFactory.createErrorResponse(e.getMessage(), request.getRequestURI());
+    }
+
+    @ExceptionHandler({
+            HttpMessageNotReadableException.class,
+            IllegalArgumentException.class
+    })
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError handleHttpMessageNotReadableException(Exception e, HttpServletRequest request) {
+        return ResponseFactory.createErrorResponse(e.getMessage(), request.getRequestURI());
+    }
+
+    @ExceptionHandler(DuplicationException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiError handleHttpMessageNotReadableException(DuplicationException e, HttpServletRequest request) {
         return ResponseFactory.createErrorResponse(e.getMessage(), request.getRequestURI());
     }
 

@@ -8,6 +8,10 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
     private StringUtils() {
     }
 
+    public static boolean hasLengthNotExceed(String input, int maxLength) {
+        return input != null && input.length() <= maxLength;
+    }
+
     public static boolean isEmail(String email) {
         if (email == null || email.isBlank()) {
             return false;
