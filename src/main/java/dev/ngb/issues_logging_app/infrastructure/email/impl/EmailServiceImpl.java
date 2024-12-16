@@ -1,6 +1,6 @@
-package com.rabiloo.khanhhd.issues_logging.infrastructure.email.impl;
+package dev.ngb.issues_logging_app.infrastructure.email.impl;
 
-import com.rabiloo.khanhhd.issues_logging.infrastructure.email.EmailService;
+import dev.ngb.issues_logging_app.infrastructure.email.EmailService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.mail.javamail.JavaMailSender;

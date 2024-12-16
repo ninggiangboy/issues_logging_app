@@ -1,4 +1,4 @@
-package com.rabiloo.khanhhd.issues_logging.infrastructure.email;
+package dev.ngb.issues_logging_app.infrastructure.email;
 
 import java.util.Map;
 
