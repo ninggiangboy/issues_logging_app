@@ -11,7 +11,7 @@ public interface TagMapper {
 
     TagMapper INSTANCE = Mappers.getMapper(TagMapper.class);
 
-    TagItemResponse toResponse(Tag tag);
+    TagItemResponse mapToResponse(Tag tag);
 
-    Tag toEntity(TagCreateRequest tagCreateRequest);
+    Tag mapToEntity(TagCreateRequest tagCreateRequest);
 }
