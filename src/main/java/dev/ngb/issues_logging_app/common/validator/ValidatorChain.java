@@ -41,7 +41,7 @@ public abstract class ValidatorChain<T> {
      * @param extractor a function to extract the field value from the object
      * @return a new RuleBuilder instance
      */
-    protected RuleBuilder<T> ruleFor(String fieldName, Function<T, String> extractor) {
+    protected <F> RuleBuilder<T, F> ruleFor(String fieldName, Function<T, F> extractor) {
         return new RuleBuilder<>(fieldName, extractor, this);
     }
 
@@ -85,12 +85,12 @@ public abstract class ValidatorChain<T> {
     }
 
     @RequiredArgsConstructor
-    protected static class RuleBuilder<T> {
+    protected static class RuleBuilder<T, F> {
         private final String fieldName;
-        private final Function<T, String> extractor;
+        private final Function<T, F> extractor;
         private final ValidatorChain<T> validator;
 
-        public RuleBuilder<T> require(Predicate<String> predicate, String errorMessage) {
+        public RuleBuilder<T, F> require(Predicate<F> predicate, String errorMessage) {
             validator.addRule(new Rule<>(
                     fieldName,
                     object -> predicate.test(extractor.apply(object)),
@@ -101,8 +101,5 @@ public abstract class ValidatorChain<T> {
     }
 
     private record Rule<T>(String fieldName, Predicate<T> predicate, String errorMessage) {
-    }
-
-    private record GlobalRule<T>(Predicate<T> predicate, String errorMessage) {
     }
 }
