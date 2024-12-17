@@ -13,7 +13,7 @@ spring:
       host: ${REDIS_HOST}
       port: ${REDIS_PORT}
   jpa:
-    database-platform: dev.ngb.issues_logging_app.infrastructure.database.CustomPostgreSQLDialect
+    database-platform: dev.ngb.issues_logging_app.infrastructure.database.FullTextSearchPostgreSQLDialect
     show-sql: true
     open-in-view: false
     properties:
@@ -47,4 +47,7 @@ springdoc:
 token:
   jwt:
     secret-key: ${JWT_SECRET}
-    access-token-expiration-duration: 86400000
+    expiration-duration: 86400000 # 1 day for testing
+  expiration:
+    refresh: 2592000000 # 30 days
+    verification: 900000 # 15 minutes

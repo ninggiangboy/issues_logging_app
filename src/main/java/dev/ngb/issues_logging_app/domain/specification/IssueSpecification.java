@@ -14,17 +14,24 @@ import java.util.List;
 
 public class IssueSpecification {
 
-    public static Specification<Issue> hasCategoryIdIn(List<Long> ids) {
+    public static Specification<Issue> hasCategoryIdIn(List<Integer> ids) {
         return (root, query, cb) -> {
             if (ListUtils.isEmpty(ids)) return null;
             return root.get(Issue_.CATEGORY).get(Category_.ID).in(ids);
         };
     }
 
-    public static Specification<Issue> hasProjectIdIn(List<Long> ids) {
+    public static Specification<Issue> hasProjectIdIn(List<Integer> ids) {
         return (root, query, cb) -> {
             if (ListUtils.isEmpty(ids)) return null;
             return root.get(Issue_.PROJECT).get(Project_.ID).in(ids);
+        };
+    }
+
+    public static Specification<Issue> hasProjectId(Integer projectId) {
+        return (root, query, cb) -> {
+            if (projectId == null) return null;
+            return cb.equal(root.get(Issue_.PROJECT).get(Project_.ID), projectId);
         };
     }
 
@@ -40,8 +47,8 @@ public class IssueSpecification {
                     cb.function(
                             SqlFunction.TSVECTOR_MATCH,
                             Boolean.class,
-                            root.get("searchVector"),
-                            cb.function(SqlFunction.PLAIN_TO_TSQUERY, String.class, cb.literal(keyword))
+                            root.get(Issue_.TITLE),
+                            cb.literal(keyword)
                     )
             );
         };
@@ -52,9 +59,13 @@ public class IssueSpecification {
                 -> cb.between(root.get(Issue_.CREATED_AT), from, to);
     }
 
-    public static Specification<Issue> hasStatus(Issue.IssueStatus status) {
+    public static Specification<Issue> hasStatus(Issue.Status status) {
         return (root, query, cb)
                 -> cb.equal(root.get(Issue_.STATUS), status);
     }
 
+    public static Specification<Issue> hasStatusNotIn(List<Issue.Status> statuses) {
+        return (root, query, cb)
+                -> cb.not(root.get(Issue_.STATUS).in(statuses));
+    }
 }

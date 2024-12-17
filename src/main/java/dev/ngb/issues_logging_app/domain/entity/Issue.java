@@ -2,12 +2,11 @@ package dev.ngb.issues_logging_app.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 @Builder
@@ -33,13 +32,21 @@ public class Issue {
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    private IssueStatus status;
+    private Status status = Status.DRAFT;
 
     @Column(name = "title")
     private String title;
 
     @Column(name = "description")
     private String description;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "review_assignee_id")
+    private User reviewAssignee;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reporter_id")
+    private User reporter;
 
     @Column(name = "created_at")
     private Instant createdAt;
@@ -48,7 +55,7 @@ public class Issue {
     private Set<Attachment> attachments = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "issue")
-    private Set<Comment> comments = new LinkedHashSet<>();
+    private List<Comment> comments = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(
@@ -58,7 +65,8 @@ public class Issue {
     )
     private Set<Tag> tags = new LinkedHashSet<>();
 
-    public enum IssueStatus {
+    public enum Status {
+        DRAFT,
         REVIEWING,
         OPENED,
         RESOLVED,

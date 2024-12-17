@@ -5,13 +5,12 @@ import org.hibernate.boot.model.FunctionContributions;
 import org.hibernate.dialect.PostgreSQLDialect;
 import org.hibernate.query.sqm.function.SqmFunctionRegistry;
 
-public class CustomPostgreSQLDialect extends PostgreSQLDialect {
+public class FullTextSearchPostgreSQLDialect extends PostgreSQLDialect {
 
     @Override
     public void initializeFunctionRegistry(FunctionContributions functionContributions) {
         super.initializeFunctionRegistry(functionContributions);
         SqmFunctionRegistry functionRegistry = functionContributions.getFunctionRegistry();
-        String pattern = "(?1 @@ ?2)";
-        functionRegistry.registerPattern(SqlFunction.TSVECTOR_MATCH, pattern);
+        functionRegistry.registerPattern(SqlFunction.TSVECTOR_MATCH, SqlFunction.TSVECTOR_MATCH_PATTERN);
     }
 }

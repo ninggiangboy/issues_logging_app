@@ -13,6 +13,6 @@ public class TagCreateValidator extends ValidatorChain<TagCreateRequest> {
     public TagCreateValidator() {
         ruleFor(TagCreateRequest.Fields.name, TagCreateRequest::name)
                 .require(StringUtils::isNotBlank, "Name is required")
-                .require(name -> StringUtils.hasLengthNotExceed(name, NAME_MAX_LENGTH), "Name is too long");
+                .require(name -> StringUtils.hasLengthLessThan(name, NAME_MAX_LENGTH), "Name is too long");
     }
 }
