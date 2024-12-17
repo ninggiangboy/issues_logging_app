@@ -40,6 +40,8 @@ CREATE TABLE issues (
     project_id INT REFERENCES projects(project_id) ON DELETE CASCADE,
     category_id INT REFERENCES categories(category_id),
     status VARCHAR(50),
+    review_assignee_id UUID REFERENCES users(user_id) ON DELETE SET NULL,
+    reporter_id UUID REFERENCES users(user_id) ON DELETE SET NULL,
     title VARCHAR(255) NOT NULL,
     description TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

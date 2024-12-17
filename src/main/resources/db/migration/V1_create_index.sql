@@ -1,0 +1,1 @@
+CREATE INDEX idx_tsvector_title ON issues USING GIN (to_tsvector(title));
