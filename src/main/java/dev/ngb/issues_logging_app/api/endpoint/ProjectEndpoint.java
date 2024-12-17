@@ -18,7 +18,7 @@ public interface ProjectEndpoint {
     ApiResult<PageData<ProjectItemResponse>> getAll(@PageableDefault Pageable page);
 
     @GetMapping("/{projectId}")
-    ApiResult<ProjectDetailResponse> getById(@PathVariable Long projectId);
+    ApiResult<ProjectDetailResponse> getById(@PathVariable Integer projectId);
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")

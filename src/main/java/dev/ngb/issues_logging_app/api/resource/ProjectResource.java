@@ -7,7 +7,6 @@ import dev.ngb.issues_logging_app.application.service.ProjectService;
 import dev.ngb.issues_logging_app.common.factory.ResponseFactory;
 import dev.ngb.issues_logging_app.common.model.ApiResult;
 import dev.ngb.issues_logging_app.common.model.PageData;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,8 +26,9 @@ public class ProjectResource implements ProjectEndpoint {
     }
 
     @Override
-    public ApiResult<ProjectDetailResponse> getById(Long projectId) {
-        return ResponseFactory.createResultResponse();
+    public ApiResult<ProjectDetailResponse> getById(Integer projectId) {
+        ProjectDetailResponse projectDetail = projectService.getProjectDetailById(projectId);
+        return ResponseFactory.createResultResponse(projectDetail);
     }
 
     @Override

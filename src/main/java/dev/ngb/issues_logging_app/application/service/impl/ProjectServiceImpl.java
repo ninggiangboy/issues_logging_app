@@ -18,6 +18,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -32,19 +33,25 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public PageData<ProjectItemResponse> getAllProject(Pageable pageRequest) {
-        Specification<Project> projectSpecification = Specification.where(null);
-        List<Integer> projectIdsUserCanAccess = null;
-        if (!SecurityUtils.isCurrentUserAdmin()) {
-            projectIdsUserCanAccess = findAccessibleProjectIds();
-            projectSpecification = projectSpecification
-                    .and(ProjectSpecification.hasIdIn(projectIdsUserCanAccess));
-        }
-        if (canNotAccessAnyProject(projectIdsUserCanAccess)) {
+        Specification<Project> projectSpecification = getAllProjectsSpecification();
+        if (projectSpecification == null) {
             return PageFactory.createEmptyPage();
         }
-        Page<ProjectItemResponse> projectsPage = projectRepository.findAll(projectSpecification, pageRequest)
+        Page<ProjectItemResponse> projectsPage = projectRepository
+                .findAll(projectSpecification, pageRequest)
                 .map(projectMapper::mapToProjectItemResponse);
         return PageFactory.createPage(projectsPage);
+    }
+
+    private Specification<Project> getAllProjectsSpecification() {
+        if (SecurityUtils.isCurrentUserAdmin()) {
+            return Specification.where(null);
+        }
+        List<Integer> projectIdsUserCanAccess = findAccessibleProjectIds();
+        if (projectIdsUserCanAccess.isEmpty()) {
+            return null;
+        }
+        return ProjectSpecification.hasIdIn(projectIdsUserCanAccess);
     }
 
     private List<Integer> findAccessibleProjectIds() {
@@ -56,7 +63,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ProjectDetailResponse getProjectDetail(Integer projectId) {
+    public ProjectDetailResponse getProjectDetailById(Integer projectId) {
         Specification<Project> projectSpecification = getProjectDetailSpecification(projectId);
         return projectRepository.findOneWithMembers(projectSpecification)
                 .map(projectMapper::mapToProjectDetailResponse)
@@ -64,12 +71,11 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     private Specification<Project> getProjectDetailSpecification(Integer projectId) {
-        Specification<Project> projectSpecification = Specification
-                .where(ProjectSpecification.hasId(projectId));
-        if (!SecurityUtils.isCurrentUserAdmin()) {
-            projectSpecification = projectSpecification
-                    .and(ProjectSpecification.hasMemberId(SecurityUtils.getCurrentUserId()));
+        Specification<Project> projectSpecification = ProjectSpecification.hasId(projectId);
+        if (SecurityUtils.isCurrentUserAdmin()) {
+            return projectSpecification;
         }
-        return projectSpecification;
+        UUID currentUserId = SecurityUtils.getCurrentUserId();
+        return projectSpecification.and(ProjectSpecification.hasMemberId(currentUserId));
     }
 }

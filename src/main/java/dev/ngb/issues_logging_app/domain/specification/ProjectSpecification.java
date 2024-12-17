@@ -3,7 +3,9 @@ package dev.ngb.issues_logging_app.domain.specification;
 import dev.ngb.issues_logging_app.common.util.ListUtils;
 import dev.ngb.issues_logging_app.domain.entity.Project;
 import dev.ngb.issues_logging_app.domain.entity.Project_;
+import dev.ngb.issues_logging_app.domain.entity.User;
 import dev.ngb.issues_logging_app.domain.entity.User_;
+import jakarta.persistence.criteria.Join;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
@@ -23,7 +25,9 @@ public class ProjectSpecification {
     }
 
     public static Specification<Project> hasMemberId(UUID memberId) {
-        return (root, query, cb) ->
-                cb.isMember(memberId, root.get(Project_.MEMBERS).get(User_.ID));
+        return (root, query, cb) -> {
+            Join<Project, User> membersJoin = root.join(Project_.MEMBERS);
+            return cb.equal(membersJoin.get(User_.ID), memberId);
+        };
     }
 }

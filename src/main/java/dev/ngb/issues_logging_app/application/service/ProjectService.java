@@ -8,5 +8,5 @@ import org.springframework.data.domain.Pageable;
 public interface ProjectService {
     PageData<ProjectItemResponse> getAllProject(Pageable pageRequest);
 
-    ProjectDetailResponse getProjectDetail(Integer projectId);
+    ProjectDetailResponse getProjectDetailById(Integer projectId);
 }
