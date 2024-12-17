@@ -6,6 +6,7 @@ import dev.ngb.issues_logging_app.domain.entity.Project_;
 import dev.ngb.issues_logging_app.domain.entity.User;
 import dev.ngb.issues_logging_app.domain.entity.User_;
 import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
@@ -26,8 +27,9 @@ public class ProjectSpecification {
 
     public static Specification<Project> hasMemberId(UUID memberId) {
         return (root, query, cb) -> {
-            Join<Project, User> membersJoin = root.join(Project_.MEMBERS);
-            return cb.equal(membersJoin.get(User_.ID), memberId);
+            root.fetch(Project_.MEMBERS, JoinType.LEFT);
+            Join<Project, User> memberJoin = root.join(Project_.MEMBERS, JoinType.LEFT);
+            return cb.equal(memberJoin.get(User_.ID), memberId);
         };
     }
 }

@@ -18,6 +18,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -33,25 +34,30 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public PageData<ProjectItemResponse> getAllProject(Pageable pageRequest) {
-        Specification<Project> projectSpecification = getAllProjectsSpecification();
-        if (projectSpecification == null) {
+        Optional<Specification<Project>> projectSpecification = getAllProjectsSpecification();
+
+        if (projectSpecification.isEmpty()) {
             return PageFactory.createEmptyPage();
         }
         Page<ProjectItemResponse> projectsPage = projectRepository
-                .findAll(projectSpecification, pageRequest)
-                .map(projectMapper::mapToProjectItemResponse);
+                .findAll(projectSpecification.get(), pageRequest)
+                .map(projectMapper::mapToItemResponse);
         return PageFactory.createPage(projectsPage);
     }
 
-    private Specification<Project> getAllProjectsSpecification() {
+    private Optional<Specification<Project>> getAllProjectsSpecification() {
         if (SecurityUtils.isCurrentUserAdmin()) {
-            return Specification.where(null);
+            return Optional.of(Specification.where(null)); // No filtering for admins
         }
+
         List<Integer> projectIdsUserCanAccess = findAccessibleProjectIds();
+
+        // Return empty Optional if the user cannot access any projects
         if (projectIdsUserCanAccess.isEmpty()) {
-            return null;
+            return Optional.empty();
         }
-        return ProjectSpecification.hasIdIn(projectIdsUserCanAccess);
+
+        return Optional.of(ProjectSpecification.hasIdIn(projectIdsUserCanAccess));
     }
 
     private List<Integer> findAccessibleProjectIds() {
@@ -66,7 +72,7 @@ public class ProjectServiceImpl implements ProjectService {
     public ProjectDetailResponse getProjectDetailById(Integer projectId) {
         Specification<Project> projectSpecification = getProjectDetailSpecification(projectId);
         return projectRepository.findOneWithMembers(projectSpecification)
-                .map(projectMapper::mapToProjectDetailResponse)
+                .map(projectMapper::mapToDetailResponse)
                 .orElseThrow(() -> new NotFoundException("Project not found"));
     }
 

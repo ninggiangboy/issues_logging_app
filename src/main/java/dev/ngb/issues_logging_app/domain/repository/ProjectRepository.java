@@ -24,4 +24,10 @@ public interface ProjectRepository extends JpaRepository<Project, Integer>, JpaS
         return findOne(projectSpecification);
     }
 
+    @EntityGraph(attributePaths = {Project_.MEMBERS})
+    Optional<Project> findOneById(Integer id);
+
+    default Optional<Project> findOneByIdWithMembers(Integer id) {
+        return findOneById(id);
+    }
 }

@@ -11,8 +11,8 @@ public interface ProjectMapper {
 
     ProjectMapper INSTANCE = Mappers.getMapper(ProjectMapper.class);
 
-    ProjectItemResponse mapToProjectItemResponse(Project project);
+    ProjectItemResponse mapToItemResponse(Project project);
 
-    ProjectDetailResponse mapToProjectDetailResponse(Project project);
+    ProjectDetailResponse mapToDetailResponse(Project project);
 
 }
