@@ -1,5 +1,6 @@
 package dev.ngb.issues_logging_app.common.util;
 
+import dev.ngb.issues_logging_app.domain.entity.User;
 import dev.ngb.issues_logging_app.infrastructure.security.AuthConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -18,6 +19,10 @@ public class SecurityUtils {
         return isCurrentHasRole(adminRole);
     }
 
+    public static User getCurrentUser() {
+        return User.builder().id(getCurrentUserId()).build();
+    }
+
     public static boolean isCurrentHasRole(String role) {
         return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
                 .map(Authentication::getAuthorities)
@@ -30,14 +35,10 @@ public class SecurityUtils {
     public static UUID getCurrentUserId() {
         return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
                 .map(Authentication::getPrincipal)
-                .map(principal -> {
-                    if (principal instanceof UserDetails userDetails) {
-                        return userDetails.getUsername();
-                    } else if (principal instanceof Jwt jwt) {
-                        return jwt.getSubject();
-                    } else {
-                        return principal.toString();
-                    }
+                .map(principal -> switch (principal) {
+                    case UserDetails userDetails -> userDetails.getUsername();
+                    case Jwt jwt -> jwt.getSubject();
+                    default -> principal.toString();
                 })
                 .map(UUID::fromString)
                 .orElse(null);

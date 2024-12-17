@@ -37,7 +37,7 @@ public class JwtServiceImpl implements JwtService {
         JWTClaimsSet jwtClaims = new JWTClaimsSet.Builder()
                 .subject(user.getUsername())
                 .issueTime(new Date(currentTime))
-                .expirationTime(new Date(currentTime + property.accessTokenExpirationDuration()))
+                .expirationTime(new Date(currentTime + property.expirationDuration()))
                 .claim(AuthConstant.ROLE_CLAIMS_NAME, getRolesClaims(user))
                 .build();
 
@@ -53,7 +53,7 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public Long getAccessTokenExpiration() {
-        return property.accessTokenExpirationDuration();
+        return property.expirationDuration();
     }
 
     private JWSSigner getSignerKey() {
