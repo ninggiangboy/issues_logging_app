@@ -13,6 +13,6 @@ public class CategoryCreateValidator extends ValidatorChain<CategoryCreateReques
     public CategoryCreateValidator() {
         ruleFor(CategoryCreateRequest.Fields.name, CategoryCreateRequest::name)
                 .require(StringUtils::isNotBlank, "Name is required")
-                .require(name -> StringUtils.hasLengthNotExceed(name, NAME_MAX_LENGTH), "Name is too long");
+                .require(name -> StringUtils.hasLengthLessThan(name, NAME_MAX_LENGTH), "Name is too long");
     }
 }

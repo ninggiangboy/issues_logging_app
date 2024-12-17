@@ -60,7 +60,7 @@ public class CategoryServiceImpl implements CategoryService {
     private void validateRequest(CategoryCreateRequest request) {
         ValidatorChain<CategoryCreateRequest> validator = validatorFactory.getValidator(CategoryCreateRequest.class);
         if (validator.isNotValid(request)) {
-            throw new ValidationException(validator.getErrors(), TagCreateRequest.class);
+            throw new ValidationException(validator.getErrors(), validator.support());
         }
     }
 

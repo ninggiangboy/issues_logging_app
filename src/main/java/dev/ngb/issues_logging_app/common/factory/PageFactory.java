@@ -6,14 +6,20 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 
 public class PageFactory {
+
+    private static final int EMPTY_PAGE_NUMBER = 0;
+    private static final int EMPTY_PAGE_SIZE = 0;
+    private static final int EMPTY_TOTAL_PAGE = 0;
+    private static final int EMPTY_TOTAL_ELEMENT = 0;
+
     public static <T> PageData<T> createEmptyPage() {
         return PageData.<T>builder()
                 .data(List.of())
                 .metadata(PageData.PageMetadata.builder()
-                        .page(0)
-                        .size(0)
-                        .totalPage(0)
-                        .totalElement(0)
+                        .page(EMPTY_PAGE_NUMBER)
+                        .size(EMPTY_PAGE_SIZE)
+                        .totalPage(EMPTY_TOTAL_PAGE)
+                        .totalElement(EMPTY_TOTAL_ELEMENT)
                         .build())
                 .build();
     }

@@ -5,10 +5,7 @@ import dev.ngb.issues_logging_app.application.dto.category.CategoryItemResponse;
 import dev.ngb.issues_logging_app.common.model.ApiResult;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,5 +17,5 @@ public interface CategoryEndpoint {
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
-    ApiResult<CategoryItemResponse> create(CategoryCreateRequest request);
+    ApiResult<CategoryItemResponse> create(@RequestBody CategoryCreateRequest request);
 }
